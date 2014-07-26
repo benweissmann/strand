@@ -1,0 +1,1 @@
+RGB light strip simulation.
