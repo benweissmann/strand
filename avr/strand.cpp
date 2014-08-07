@@ -25,6 +25,10 @@ void write() {
 
 double hsin(double x) { return 0.5 + 0.5 * sin(x); }
 
+//int brightness(double x) { return (int)(1.0 + 254.0 * x); }
+//int brightness(double x) { return (int)(1.0 + 254.0 * pow(p0 * x, 2.5)); }
+int brightness(double x) { return 255.0 * p0 * x; }
+
 // https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
 
 void rgb(double hue, double *r, double *g, double *b) {
@@ -81,9 +85,6 @@ void alternating() {
     }
   }
 }
-
-//int brightness(double x) { return (int)(1.0 + 254.0 * x); }
-int brightness(double x) { return 255 * x; }
 
 void pattern0() {
   float time = millis() / 1000.0;
