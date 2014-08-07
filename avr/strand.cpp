@@ -57,6 +57,20 @@ void rainbow() {
   }
 }
 
+double timedelta() {
+    static unsigned long prev = 0;
+
+    if (prev == 0) {
+        prev = micros();
+        return 0;
+    } else {
+        unsigned long now = micros();
+        unsigned long dt = now - prev;
+        prev = now;
+        return dt / 1.0e6;
+    }
+}
+
 void alternating() {
   for (int i = 0; i < NLIGHTS; i++) {
     switch (i % 3) {
