@@ -12,9 +12,8 @@ static double p2;
 
 void blink() {
   digitalWrite(13, HIGH);
-  delay(100);
+  delay(5);
   digitalWrite(13, LOW);
-  delay(100);
 }
 
 void write() {
