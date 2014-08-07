@@ -105,11 +105,10 @@ void alternating() {
 }
 
 void pattern0() {
-  float time = millis() / 1000.0;
-  Serial.println(time);
+  float speed = 2.0 * p1;
+  static float time = 0;
 
-  // ???
-  colour(0, 0, 0);
+  time += timedelta() * speed;
 
   for (int i = 0; i < NLIGHTS; i++) {
     double pos = (double)i / (double)NLIGHTS;
