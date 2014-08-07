@@ -6,6 +6,10 @@
 
 #define NLIGHTS 50
 
+static double p0;
+static double p1;
+static double p2;
+
 void blink() {
   digitalWrite(13, HIGH);
   delay(100);
@@ -17,9 +21,6 @@ void write() {
   for (int i = 0; i < NLIGHTS; i++) {
     colour(0, 0, 0);
   }
-}
-
-void setup() {
 }
 
 double hsin(double x) { return 0.5 + 0.5 * sin(x); }
@@ -144,8 +145,29 @@ void pattern1() {
   }
 }
 
+double read_param(int i) {
+    return analogRead(i) / 1023.0;
+}
+
+void read_params() {
+    p0 = analogRead(0) / 1023.0;
+    p1 = analogRead(1) / 1023.0;
+    p2 = analogRead(2) / 1023.0;
+#ifdef DEBUG
+    Serial.print("p0 = ");
+    Serial.println(p0);
+    Serial.print("p1 = ");
+    Serial.println(p1);
+    Serial.print("p2 = ");
+    Serial.println(p2);
+#endif
+}
+
+void setup() {
+}
+
 void loop() {
-  // Serial.begin(9600);
+  read_params();
   begin();
   // rainbow();
   // alternating();
