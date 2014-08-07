@@ -76,6 +76,24 @@ double timedelta() {
     }
 }
 
+void moving_rainbow() {
+    // XXX: scale this logarithmically
+    double speed = 3.0 * p1;
+    double dt = timedelta();
+    static double phase = 0;
+
+    phase += speed * dt;
+
+    for (int i = 0; i < NLIGHTS; i++) {
+        double r, g, b;
+        float pos = (float)i / (float)NLIGHTS;
+        rgb(modf(pos + phase, NULL), &r, &g, &b);
+        colour(brightness(r), brightness(g), brightness(b));
+    }
+
+    phase = modf(phase, NULL);
+}
+
 void alternating() {
   for (int i = 0; i < NLIGHTS; i++) {
     switch (i % 3) {
