@@ -38,7 +38,7 @@ void rgb(double hue, double *r, double *g, double *b) {
   double h = hue * 6.0;
   double x = c * (1 - fabs(fmod(h, 2.0) - 1));
   double m = v - c;
-  double r_, g_, b_;
+  double r_ = 0, g_ = 0, b_ = 0;
 
   switch ((int) trunc(h)) {
   case 0: r_ = c; g_ = x; b_ = 0; break;
