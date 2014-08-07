@@ -163,6 +163,29 @@ void pattern1() {
   }
 }
 
+double clamp(double dmin, double dmax, double x) { return max(dmin, min(dmax, x)); }
+
+void parabola() {
+    static float x = 0;
+    static float hue = 0;
+    float dt = p1 * timedelta();
+    x += dt;
+    float height = 1 - pow(x - 1, 2);
+
+    if (height < 0) {
+        x = 0;
+        height = 0;
+        hue = fmod(hue + 0.1, 1.0);
+    }
+
+    for (int i = 0; i < NLIGHTS; i++) {
+        float lum = 1.0 - clamp(0.0, 1.0, abs(pow(i - height * (NLIGHTS - 1), 4.0)));
+        double r, g, b;
+        rgb(hue, &r, &g, &b);
+        colour(brightness(lum * r), brightness(lum * g), brightness(lum * b));
+    }
+}
+
 double read_param(int i) {
     return analogRead(i) / 1023.0;
 }
