@@ -16,17 +16,22 @@ void blink() {
   digitalWrite(13, LOW);
 }
 
-void write() {
+// XXX: scale sublinearly
+//int brightness(double x) { return (int)(1.0 + 254.0 * x); }
+//int brightness(double x) { return (int)(1.0 + 254.0 * pow(p0 * x, 2.5)); }
+int brightness(double x) { return 255.0 * p0 * x; }
+
+void col(double r, double g, double b) {
+    colour(brightness(r), brightness(g), brightness(b));
+}
+
+void clear() {
   for (int i = 0; i < NLIGHTS; i++) {
-    colour(0, 0, 0);
+    col(0, 0, 0);
   }
 }
 
 double hsin(double x) { return 0.5 + 0.5 * sin(x); }
-
-//int brightness(double x) { return (int)(1.0 + 254.0 * x); }
-//int brightness(double x) { return (int)(1.0 + 254.0 * pow(p0 * x, 2.5)); }
-int brightness(double x) { return 255.0 * p0 * x; }
 
 // https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
 
@@ -57,7 +62,7 @@ void rainbow() {
   for (int i = 0; i < NLIGHTS; i++) {
     double r, g, b;
     rgb((float)i / (float)NLIGHTS, &r, &g, &b);
-    colour(255 * r, 255 * g, 255 * b);
+    col(r, g, b);
   }
 }
 
@@ -87,7 +92,7 @@ void moving_rainbow() {
         double r, g, b;
         float pos = (float)i / (float)NLIGHTS;
         rgb(modf(pos + phase, NULL), &r, &g, &b);
-        colour(brightness(r), brightness(g), brightness(b));
+        col(r, g, b);
     }
 
     phase = modf(phase, NULL);
@@ -96,9 +101,9 @@ void moving_rainbow() {
 void alternating() {
   for (int i = 0; i < NLIGHTS; i++) {
     switch (i % 3) {
-    case 0: colour(0, 0, 255); break;
-    case 1: colour(0, 255, 0); break;
-    case 2: colour(255, 0, 0); break;
+    case 0: col(0, 0, 1); break;
+    case 1: col(0, 1, 0); break;
+    case 2: col(1, 0, 0); break;
     }
   }
 }
@@ -120,7 +125,7 @@ void pattern0() {
     rgb(hue, &r, &g, &b);
     // colour(255 * lum * r, 255 * lum * g, 255 * lum * b);
     // colour(255 * lum, 255 * lum, 255 * lum);
-    colour(brightness(lum * r), brightness(lum * g), brightness(lum * b));
+    col(lum * r, lum * g, lum * b);
   }
 }
 
@@ -143,7 +148,6 @@ void pattern1() {
     // Serial.println(lum);
     // Serial.println(brightness(lum));
 
-
     // if (i == 25) {
     //   colour(255, 0, 255);
     //   // colour(0, 0, 32 * hsin(time));
@@ -158,7 +162,7 @@ void pattern1() {
 
     double r, g, b;
     rgb(d, &r, &g, &b);
-    colour(brightness(lum * r), brightness(lum * g), brightness(lum * b));
+    col(lum * r, lum * g, lum * b);
   }
 }
 
@@ -181,7 +185,7 @@ void parabola() {
         float lum = 1.0 - clamp(0.0, 1.0, abs(pow(i - height * (NLIGHTS - 1), 4.0)));
         double r, g, b;
         rgb(hue, &r, &g, &b);
-        colour(brightness(lum * r), brightness(lum * g), brightness(lum * b));
+        col(lum * r, lum * g, lum * b);
     }
 }
 
