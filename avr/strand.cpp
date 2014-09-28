@@ -111,6 +111,7 @@ void alternating() {
 void pattern0() {
   float speed = 2.0 * p1;
   static float time = 0;
+  double hue = 0.0;
 
   time += timedelta() * speed;
 
@@ -123,6 +124,8 @@ void pattern0() {
     //double hue = fmod(pos + 0.2 * hsin(time / 15.0), 1.0);
     double hue = fmod(0.3 * pos + time / 30.0, 1.0);
     rgb(hue, &r, &g, &b);
+    //hue += 123.45;
+    //rgb(fmod(hue, 1.0), &r, &g, &b);
     // colour(255 * lum * r, 255 * lum * g, 255 * lum * b);
     // colour(255 * lum, 255 * lum, 255 * lum);
     col(lum * r, lum * g, lum * b);
@@ -189,6 +192,181 @@ void parabola() {
     }
 }
 
+void twinkle() {
+    static double hue[NLIGHTS] = { 0, };
+    static double lum[NLIGHTS] = { 0, };
+
+    for (int i = 0; i < NLIGHTS; i++) {
+        lum[i] *= 0.9;
+
+        if (lum[i] < 0.01 && random(1, 10000) < 20) {
+            hue[i] = random(0, 255.0) / 255.0;
+            lum[i] = 1.0;
+        }
+
+        double r, g, b;
+        rgb(hue[i], &r, &g, &b);
+        col(lum[i] * r, lum[i] * g, lum[i] * b);
+    }
+
+    delay(30);
+}
+
+void climb() {
+    static double hue[NLIGHTS] = { 0, };
+    static double lum[NLIGHTS] = { 0, };
+
+    if (random(1000) < 50) {
+        lum[0] = 1;
+        hue[0] = random(0, 255) / 255.0;
+    } else {
+        lum[0] = 0;
+    }
+
+    for (int i = 0; i < NLIGHTS; i++) {
+        double r, g, b;
+        rgb(hue[i], &r, &g, &b);
+        col(lum[i] * r, lum[i] * g, lum[i] * b);
+    }
+
+    for (int i = NLIGHTS - 1; i > 0; i--) {
+        lum[i] = lum[i - 1];
+        hue[i] = hue[i - 1];
+    }
+
+    delay(200);
+}
+
+struct point {
+    bool on;
+    double pos;
+    double speed;
+    double r;
+    double g;
+    double b;
+};
+
+struct rgb {
+    double r;
+    double g;
+    double b;
+};
+
+#define POINTS 4
+
+void climb2() {
+    static struct point points[POINTS] = { 0, };
+    static struct rgb cols[NLIGHTS] = { 0, };
+    double td = timedelta();
+
+    for (int i = 0; i < NLIGHTS; i++) {
+        double pos = (double)i / (double)NLIGHTS;
+        double r = 0, g = 0, b = 0;
+
+        for (int j = 0; j < POINTS; j++) {
+            struct point *p = points + j;
+
+            if (p->on) {
+                //double d = 1000.0 * abs(p->pos - pos);
+                //double d = pow(0 * abs(p->pos - pos), 5.0);
+                double d = pow(20.0 * abs(p->pos - pos), 5.0);
+#if 0
+                Serial.print(j);
+                Serial.print(" : ");
+                Serial.print(p->pos);
+                Serial.print(" - ");
+                Serial.print(pos);
+                Serial.print(" ; ");
+                Serial.print(d);
+                Serial.println();
+                Serial.print(d);
+                Serial.print(" ");
+                Serial.print(p->r);
+                Serial.print(" ");
+                Serial.print(p->g);
+                Serial.print(" ");
+                Serial.print(p->b);
+                Serial.println();
+#endif
+                r += p->r / d;
+                g += p->g / d;
+                b += p->b / d;
+            }
+        }
+
+        //cols(min(1.0, r), min(1.0, g), min(1.0, b));
+        cols[i].r = min(1.0, r);
+        cols[i].g = min(1.0, g);
+        cols[i].b = min(1.0, b);
+    }
+
+    for (int i = 0; i < NLIGHTS; i++) {
+        struct rgb *c = cols + i;
+        col(c->r, c->g, c->b);
+    }
+
+#if 0
+    for (int j = 0; j < POINTS; j++) {
+        struct point p = points[j];
+        Serial.print(p.on);
+        Serial.print(" ");
+    }
+
+    Serial.println();
+
+    for (int j = 0; j < POINTS; j++) {
+        struct point p = points[j];
+        Serial.print(p.pos);
+        Serial.print(" ");
+    }
+
+    Serial.println();
+#endif
+
+    for (int j = 0; j < POINTS; j++) {
+        struct point *p = points + j;
+
+        if (p->on) {
+            p->pos += 2.0 * p1 * p->speed * td;
+
+            if (p->pos > 1.5) {
+                p->on = false;
+                p->pos = 0;
+            }
+        } else if (random(0, 10000) < 50.0 * p1) {
+            p->on = true;
+            p->pos = 0;
+            p->speed = random(3, 20) / 10.0;
+            //double r, g, b;
+            double hue = random(0, 255) / 255.0;
+            rgb(hue, &p->r, &p->g, &p->b);
+
+#if 0
+            Serial.print(p->r);
+            Serial.print(" ");
+            Serial.print(p->g);
+            Serial.print(" ");
+            Serial.print(p->b);
+            Serial.println();
+#endif
+        }
+    }
+}
+
+void pulse() {
+    static double phase = 0.0;
+    double dt = timedelta();
+
+    //phase += p1 * dt / 2.0;
+    phase += dt / 2.0;
+
+    for (int i = 0; i < NLIGHTS; i++) {
+        double pos = (double)i / (double)NLIGHTS;
+        double lum = 0.8 + 0.2 * sin(5.0 * (pos - phase));
+        col(lum, lum, lum);
+    }
+}
+
 double read_param(int i) {
     return analogRead(i) / 1023.0;
 }
@@ -208,14 +386,21 @@ void read_params() {
 }
 
 void setup() {
+    Serial.begin(9600);
 }
 
 void loop() {
   read_params();
+  //p0 = 1.0;
   begin();
-  // rainbow();
-  // alternating();
+  //rainbow();
+  // moving_rainbow();
+  //alternating();
   pattern0();
   // pattern1();
+  //parabola();
+  //twinkle();
+  //climb2();
+  //pulse();
   end();
 }
