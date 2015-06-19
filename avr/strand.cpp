@@ -2,13 +2,16 @@
 #include <math.h>
 #include <Arduino.h>
 
+#include "button.h"
 #include "ws28xx.h"
 
 #define NLIGHTS 50
 
+static int mode = 0;
 static double p0;
 static double p1;
 static double p2;
+static Button *b;
 
 void blink() {
   digitalWrite(13, HIGH);
@@ -387,20 +390,26 @@ void read_params() {
 
 void setup() {
     Serial.begin(9600);
+    b = new Button(4);
 }
 
 void loop() {
   read_params();
   //p0 = 1.0;
   begin();
-  //rainbow();
-  // moving_rainbow();
-  //alternating();
-  pattern0();
-  // pattern1();
-  //parabola();
-  //twinkle();
-  //climb2();
-  //pulse();
+
+  if (b->read())
+    mode++;
+
+  switch (mode) {
+     case 0: pattern0(); break;
+     case 1: pattern1(); break;
+     case 2: moving_rainbow(); break;
+     case 3: parabola(); break;
+     case 4: twinkle(); break;
+     case 5: climb2(); break;
+     default: mode = 0; break;
+  }
+
   end();
 }
