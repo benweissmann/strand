@@ -147,8 +147,6 @@ void pattern1() {
   }
 }
 
-double clamp(double dmin, double dmax, double x) { return max(dmin, min(dmax, x)); }
-
 void parabola() {
     static float x = 0;
     static float hue = 0;

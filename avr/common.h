@@ -19,6 +19,7 @@ struct pattern
 
 extern "C" {
 
+double clamp(double dmin, double dmax, double x);
 double frac(double x);
 double hsin(double x);
 

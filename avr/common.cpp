@@ -3,6 +3,11 @@
 
 #include "common.h"
 
+double clamp(double dmin, double dmax, double x)
+{
+    return fmax(dmin, fmin(dmax, x));
+}
+
 double frac(double x)
 {
     return fmod(x, 1.0);
