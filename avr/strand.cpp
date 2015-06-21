@@ -14,12 +14,6 @@ static double p1;
 static double p2;
 static Button *b;
 
-void blink() {
-  digitalWrite(13, HIGH);
-  delay(5);
-  digitalWrite(13, LOW);
-}
-
 // XXX: scale sublinearly
 //int brightness(double x) { return (int)(1.0 + 254.0 * x); }
 //int brightness(double x) { return (int)(1.0 + 254.0 * pow(p0 * x, 2.5)); }
