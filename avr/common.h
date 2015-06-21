@@ -23,6 +23,9 @@ double clamp(double dmin, double dmax, double x);
 double frac(double x);
 double hsin(double x);
 
+void rgb_from_hsv(
+    double h, double s, double v,
+    double *r, double *g, double *b);
 void rgb_from_hue(double hue, double *r, double *g, double *b);
 
 }
