@@ -38,7 +38,8 @@ void rainbow() {
   }
 }
 
-double timedelta() {
+double timedelta()
+{
     static unsigned long prev = 0;
 
     if (prev == 0) {
@@ -52,10 +53,10 @@ double timedelta() {
     }
 }
 
-void moving_rainbow() {
+void moving_rainbow(double dt)
+{
     // XXX: scale this logarithmically
     double speed = 3.0 * p1;
-    double dt = timedelta();
     static double phase = 0;
 
     phase += speed * dt;
@@ -70,7 +71,8 @@ void moving_rainbow() {
     phase = frac(phase);
 }
 
-void alternating() {
+void alternating(double _dt)
+{
   for (int i = 0; i < NLIGHTS; i++) {
     switch (i % 3) {
     case 0: col(0, 0, 1); break;
@@ -80,11 +82,12 @@ void alternating() {
   }
 }
 
-void pattern0() {
+void pattern0(double dt)
+{
   float speed = 2.0 * p1;
   static float time = 0;
 
-  time += timedelta() * speed;
+  time += dt * speed;
 
   for (int i = 0; i < NLIGHTS; i++) {
     double pos = (double)i / (double)NLIGHTS;
@@ -103,7 +106,8 @@ void pattern0() {
   }
 }
 
-void pattern1() {
+void pattern1(double _dt)
+{
   float time = millis() / 1000.0;
 
   for (int i = 0; i < NLIGHTS; i++) {
@@ -140,11 +144,11 @@ void pattern1() {
   }
 }
 
-void parabola() {
+void parabola(double dt)
+{
     static float x = 0;
     static float hue = 0;
-    float dt = p1 * timedelta();
-    x += dt;
+    x += p1 * dt;
     float height = 1 - pow(x - 1, 2);
 
     if (height < 0) {
@@ -161,7 +165,8 @@ void parabola() {
     }
 }
 
-void twinkle() {
+void twinkle(double dt)
+{
     static double hue[NLIGHTS] = { 0, };
     static double lum[NLIGHTS] = { 0, };
 
@@ -178,10 +183,12 @@ void twinkle() {
         col(lum[i] * r, lum[i] * g, lum[i] * b);
     }
 
+    // XXX
     delay(30);
 }
 
-void climb() {
+void climb(double dt)
+{
     static double hue[NLIGHTS] = { 0, };
     static double lum[NLIGHTS] = { 0, };
 
@@ -203,6 +210,7 @@ void climb() {
         hue[i] = hue[i - 1];
     }
 
+    // XXX
     delay(200);
 }
 
@@ -217,7 +225,8 @@ struct point {
 
 #define POINTS 4
 
-void climb2() {
+void climb2(double dt)
+{
     static struct point points[POINTS] = { 0, };
     static rgb cols[NLIGHTS] = { 0, };
     double td = timedelta();
@@ -316,9 +325,9 @@ void climb2() {
     }
 }
 
-void pulse() {
+void pulse(double dt)
+{
     static double phase = 0.0;
-    double dt = timedelta();
 
     //phase += p1 * dt / 2.0;
     phase += dt / 2.0;
@@ -349,7 +358,9 @@ void setup() {
     b = new Button(4);
 }
 
-void loop() {
+void loop()
+{
+  double dt = timedelta();
   read_params();
   //p0 = 1.0;
   begin();
@@ -358,12 +369,12 @@ void loop() {
     mode++;
 
   switch (mode) {
-     case 0: pattern0(); break;
-     case 1: pattern1(); break;
-     case 2: moving_rainbow(); break;
-     case 3: parabola(); break;
-     case 4: twinkle(); break;
-     case 5: climb2(); break;
+     case 0: pattern0(dt); break;
+     case 1: pattern1(dt); break;
+     case 2: moving_rainbow(dt); break;
+     case 3: parabola(dt); break;
+     case 4: twinkle(dt); break;
+     case 5: climb2(dt); break;
      default: mode = 0; break;
   }
 
