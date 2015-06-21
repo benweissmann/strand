@@ -39,7 +39,7 @@ double timedelta()
     }
 }
 
-void moving_rainbow(double dt)
+void rainbow(double dt)
 {
     // XXX: scale this logarithmically
     double speed = 3.0 * p1;
@@ -357,7 +357,7 @@ void loop()
   switch (mode) {
      case 0: pattern0(dt); break;
      case 1: pattern1(dt); break;
-     case 2: moving_rainbow(dt); break;
+     case 2: rainbow(dt); break;
      case 3: parabola(dt); break;
      case 4: twinkle(dt); break;
      case 5: climb2(dt); break;
