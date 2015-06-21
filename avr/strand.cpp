@@ -92,11 +92,11 @@ void pattern1(double _dt, rgb out[])
     double pos = (double)i / (double)NLIGHTS;
     double centre = hsin(time / 5.0);
     //double lum = 1.0 - pow(centre - pos, 10.0);
-    //double lum = 1.0 / pow(abs(pos - centre), 0.1);
+    //double lum = 1.0 / pow(fabs(pos - centre), 0.1);
     double d = pos - centre;
     //double lum = exp(pow(d * 100.0, 2.0));
-    double lum = 1.0 - abs(5.0 + 5.0 * hsin(time) * d);
-    lum = min(max(0, lum), 1);
+    double lum = 1.0 - fabs(5.0 + 5.0 * hsin(time) * d);
+    lum = fmin(fmax(0, lum), 1);
     // Serial.print(i);
     // Serial.print(" ");
     // Serial.print(pos);
@@ -137,7 +137,7 @@ void parabola(double dt, rgb out[])
     }
 
     for (int i = 0; i < NLIGHTS; i++) {
-        float lum = 1.0 - clamp(0.0, 1.0, abs(pow(i - height * (NLIGHTS - 1), 4.0)));
+        float lum = 1.0 - clamp(0.0, 1.0, fabs(pow(i - height * (NLIGHTS - 1), 4.0)));
         double r, g, b;
         rgb_from_hue(hue, &r, &g, &b);
         out[i] = (rgb){ lum * r, lum * g, lum * b };
@@ -217,9 +217,9 @@ void climb2(double dt, rgb out[])
             struct point *p = points + j;
 
             if (p->on) {
-                //double d = 1000.0 * abs(p->pos - pos);
-                //double d = pow(0 * abs(p->pos - pos), 5.0);
-                double d = pow(20.0 * abs(p->pos - pos), 5.0);
+                //double d = 1000.0 * fabs(p->pos - pos);
+                //double d = pow(0 * fabs(p->pos - pos), 5.0);
+                double d = pow(20.0 * fabs(p->pos - pos), 5.0);
 #if 0
                 Serial.print(j);
                 Serial.print(" : ");
@@ -244,10 +244,10 @@ void climb2(double dt, rgb out[])
             }
         }
 
-        //cols(min(1.0, r), min(1.0, g), min(1.0, b));
-        cols[i].r = min(1.0, r);
-        cols[i].g = min(1.0, g);
-        cols[i].b = min(1.0, b);
+        //cols(fmin(1.0, r), fmin(1.0, g), fmin(1.0, b));
+        cols[i].r = fmin(1.0, r);
+        cols[i].g = fmin(1.0, g);
+        cols[i].b = fmin(1.0, b);
     }
 
     for (int i = 0; i < NLIGHTS; i++) {
