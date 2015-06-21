@@ -8,6 +8,13 @@ typedef struct
     double b;
 } rgb;
 
+typedef struct
+{
+    double h;
+    double s;
+    double v;
+} hsv;
+
 typedef void (*pattern_update)(double delta, rgb *out);
 
 struct pattern
