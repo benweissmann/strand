@@ -30,12 +30,6 @@ void col(double r, double g, double b)
     put_colour(brightness(r), brightness(g), brightness(b));
 }
 
-void clear() {
-  for (int i = 0; i < NLIGHTS; i++) {
-    col(0, 0, 0);
-  }
-}
-
 void rainbow() {
   for (int i = 0; i < NLIGHTS; i++) {
     double r, g, b;
@@ -89,7 +83,6 @@ void alternating() {
 void pattern0() {
   float speed = 2.0 * p1;
   static float time = 0;
-  double hue = 0.0;
 
   time += timedelta() * speed;
 
@@ -335,10 +328,6 @@ void pulse() {
         double lum = 0.8 + 0.2 * sin(5.0 * (pos - phase));
         col(lum, lum, lum);
     }
-}
-
-double read_param(int i) {
-    return analogRead(i) / 1023.0;
 }
 
 void read_params() {
