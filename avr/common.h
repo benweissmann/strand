@@ -1,20 +1,20 @@
 
 #define NLIGHTS 50
 
-struct rgb
+typedef struct
 {
     double r;
     double g;
     double b;
-};
+} colour;
 
-typedef void (*pattern_update)(double detla, struct rgb *out);
+typedef void (*pattern_update)(double delta, colour *out);
 
 struct pattern
 {
     const char *name;
     void (*init)();
-    void (*update)(double delta, struct rgb *out);
+    void (*update)(double delta, colour *out);
 };
 
 extern "C" {

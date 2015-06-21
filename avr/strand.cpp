@@ -230,7 +230,7 @@ struct point {
 
 void climb2() {
     static struct point points[POINTS] = { 0, };
-    static struct rgb cols[NLIGHTS] = { 0, };
+    static colour cols[NLIGHTS] = { 0, };
     double td = timedelta();
 
     for (int i = 0; i < NLIGHTS; i++) {
@@ -275,7 +275,7 @@ void climb2() {
     }
 
     for (int i = 0; i < NLIGHTS; i++) {
-        struct rgb *c = cols + i;
+        colour *c = cols + i;
         col(c->r, c->g, c->b);
     }
 
