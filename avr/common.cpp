@@ -49,3 +49,9 @@ void rgb_from_hue(double hue, double *r, double *g, double *b)
     rgb_from_hsv(hue, 1.0, 1.0, r, g, b);
 }
 
+void rgb_mul(double x, rgb *c)
+{
+    c->r *= x;
+    c->g *= x;
+    c->b *= x;
+}
