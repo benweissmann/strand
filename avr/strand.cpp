@@ -344,25 +344,33 @@ void setup() {
     b = new Button(4);
 }
 
-void loop()
-{
-  double dt = timedelta();
-  read_params();
-  //p0 = 1.0;
-  begin();
+static void (*patterns[])(double dt) = {
+    pattern0,
+    pattern1,
+    rainbow,
+    parabola,
+    twinkle,
+    climb2,
+    NULL
+};
 
-  if (b->read())
+void switch_mode()
+{
     mode++;
 
-  switch (mode) {
-     case 0: pattern0(dt); break;
-     case 1: pattern1(dt); break;
-     case 2: rainbow(dt); break;
-     case 3: parabola(dt); break;
-     case 4: twinkle(dt); break;
-     case 5: climb2(dt); break;
-     default: mode = 0; break;
-  }
+    if (!patterns[mode])
+        mode = 0;
+}
 
-  end();
+void loop()
+{
+    double dt = timedelta();
+
+    if (b->read())
+        switch_mode();
+
+    read_params();
+    begin();
+    patterns[mode](dt);
+    end();
 }
