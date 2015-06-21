@@ -36,11 +36,9 @@ double timedelta()
 
 void rainbow(double dt, rgb *out)
 {
-    // XXX: scale this logarithmically
-    double speed = 3.0 * p1;
     static double phase = 0;
 
-    phase += speed * dt;
+    phase += 3.0 * dt;
 
     for (int i = 0; i < NLIGHTS; i++) {
         double r, g, b;
@@ -69,10 +67,9 @@ void alternating(double _dt, rgb out[])
 
 void pattern0(double dt, rgb out[])
 {
-  float speed = 2.0 * p1;
   static float time = 0;
 
-  time += dt * speed;
+  time += 2.0 * dt;
 
   for (int i = 0; i < NLIGHTS; i++) {
     double pos = (double)i / (double)NLIGHTS;
@@ -129,8 +126,9 @@ void parabola(double dt, rgb out[])
 {
     static float x = 0;
     static float hue = 0;
-    x += p1 * dt;
     float height = 1 - pow(x - 1, 2);
+
+    x += dt;
 
     if (height < 0) {
         x = 0;
@@ -278,13 +276,13 @@ void climb2(double dt, rgb out[])
         struct point *p = points + j;
 
         if (p->on) {
-            p->pos += 2.0 * p1 * p->speed * dt;
+            p->pos += 2.0 * p->speed * dt;
 
             if (p->pos > 1.5) {
                 p->on = false;
                 p->pos = 0;
             }
-        } else if (random(0, 10000) < 50.0 * p1) {
+        } else if (random(0, 10000) < 50.0 * dt) { // XXX: scale
             p->on = true;
             p->pos = 0;
             p->speed = random(3, 20) / 10.0;
@@ -308,7 +306,6 @@ void pulse(double dt, rgb out[])
 {
     static double phase = 0.0;
 
-    //phase += p1 * dt / 2.0;
     phase += dt / 2.0;
 
     for (int i = 0; i < NLIGHTS; i++) {
@@ -357,7 +354,7 @@ void switch_mode()
 
 void loop()
 {
-    double dt = timedelta();
+    double dt = p1 * timedelta();
     rgb cols[NLIGHTS];
 
     if (b->read())
