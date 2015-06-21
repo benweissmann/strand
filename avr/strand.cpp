@@ -33,7 +33,7 @@ void col(double r, double g, double b)
 void rainbow() {
   for (int i = 0; i < NLIGHTS; i++) {
     double r, g, b;
-    rgb((float)i / (float)NLIGHTS, &r, &g, &b);
+    rgb_from_hue((float)i / (float)NLIGHTS, &r, &g, &b);
     col(r, g, b);
   }
 }
@@ -63,7 +63,7 @@ void moving_rainbow() {
     for (int i = 0; i < NLIGHTS; i++) {
         double r, g, b;
         float pos = (float)i / (float)NLIGHTS;
-        rgb(modf(pos + phase, NULL), &r, &g, &b);
+        rgb_from_hue(modf(pos + phase, NULL), &r, &g, &b);
         col(r, g, b);
     }
 
@@ -94,9 +94,9 @@ void pattern0() {
     double r, g, b;
     //double hue = fmod(pos + 0.2 * hsin(time / 15.0), 1.0);
     double hue = fmod(0.3 * pos + time / 30.0, 1.0);
-    rgb(hue, &r, &g, &b);
+    rgb_from_hue(hue, &r, &g, &b);
     //hue += 123.45;
-    //rgb(fmod(hue, 1.0), &r, &g, &b);
+    //rgb_from_hue(fmod(hue, 1.0), &r, &g, &b);
     // colour(255 * lum * r, 255 * lum * g, 255 * lum * b);
     // colour(255 * lum, 255 * lum, 255 * lum);
     col(lum * r, lum * g, lum * b);
@@ -135,7 +135,7 @@ void pattern1() {
     //colour(0, brightness(lum) >> 2, 0);
 
     double r, g, b;
-    rgb(d, &r, &g, &b);
+    rgb_from_hue(d, &r, &g, &b);
     col(lum * r, lum * g, lum * b);
   }
 }
@@ -156,7 +156,7 @@ void parabola() {
     for (int i = 0; i < NLIGHTS; i++) {
         float lum = 1.0 - clamp(0.0, 1.0, abs(pow(i - height * (NLIGHTS - 1), 4.0)));
         double r, g, b;
-        rgb(hue, &r, &g, &b);
+        rgb_from_hue(hue, &r, &g, &b);
         col(lum * r, lum * g, lum * b);
     }
 }
@@ -174,7 +174,7 @@ void twinkle() {
         }
 
         double r, g, b;
-        rgb(hue[i], &r, &g, &b);
+        rgb_from_hue(hue[i], &r, &g, &b);
         col(lum[i] * r, lum[i] * g, lum[i] * b);
     }
 
@@ -194,7 +194,7 @@ void climb() {
 
     for (int i = 0; i < NLIGHTS; i++) {
         double r, g, b;
-        rgb(hue[i], &r, &g, &b);
+        rgb_from_hue(hue[i], &r, &g, &b);
         col(lum[i] * r, lum[i] * g, lum[i] * b);
     }
 
@@ -302,7 +302,7 @@ void climb2() {
             p->speed = random(3, 20) / 10.0;
             //double r, g, b;
             double hue = random(0, 255) / 255.0;
-            rgb(hue, &p->r, &p->g, &p->b);
+            rgb_from_hue(hue, &p->r, &p->g, &p->b);
 
 #if 0
             Serial.print(p->r);

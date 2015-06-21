@@ -20,7 +20,7 @@ double hsin(double x)
 
 // https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
 
-void rgb(double hue, double *r, double *g, double *b)
+void rgb_from_hue(double hue, double *r, double *g, double *b)
 {
   double s = 1.0;
   double v = 1.0;
