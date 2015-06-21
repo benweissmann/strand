@@ -25,8 +25,9 @@ void blink() {
 //int brightness(double x) { return (int)(1.0 + 254.0 * pow(p0 * x, 2.5)); }
 int brightness(double x) { return 255.0 * p0 * x; }
 
-void col(double r, double g, double b) {
-    colour(brightness(r), brightness(g), brightness(b));
+void col(double r, double g, double b)
+{
+    put_colour(brightness(r), brightness(g), brightness(b));
 }
 
 void clear() {
