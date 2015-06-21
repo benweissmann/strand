@@ -24,14 +24,6 @@ void col(double r, double g, double b)
     put_colour(brightness(r), brightness(g), brightness(b));
 }
 
-void rainbow() {
-  for (int i = 0; i < NLIGHTS; i++) {
-    double r, g, b;
-    rgb_from_hue((float)i / (float)NLIGHTS, &r, &g, &b);
-    col(r, g, b);
-  }
-}
-
 double timedelta()
 {
     static unsigned long prev = 0;
