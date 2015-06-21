@@ -63,11 +63,11 @@ void moving_rainbow() {
     for (int i = 0; i < NLIGHTS; i++) {
         double r, g, b;
         float pos = (float)i / (float)NLIGHTS;
-        rgb_from_hue(modf(pos + phase, NULL), &r, &g, &b);
+        rgb_from_hue(frac(pos + phase), &r, &g, &b);
         col(r, g, b);
     }
 
-    phase = modf(phase, NULL);
+    phase = frac(phase);
 }
 
 void alternating() {
