@@ -6,15 +6,15 @@ typedef struct
     double r;
     double g;
     double b;
-} colour;
+} rgb;
 
-typedef void (*pattern_update)(double delta, colour *out);
+typedef void (*pattern_update)(double delta, rgb *out);
 
 struct pattern
 {
     const char *name;
     void (*init)();
-    void (*update)(double delta, colour *out);
+    void (*update)(double delta, rgb *out);
 };
 
 extern "C" {
