@@ -92,11 +92,11 @@ void pattern0() {
     //lum = 0.05 + 0.95 * lum;
     //int ilum = int(255 * (1.0 - lum));
     double r, g, b;
-    //double hue = fmod(pos + 0.2 * hsin(time / 15.0), 1.0);
-    double hue = fmod(0.3 * pos + time / 30.0, 1.0);
+    //double hue = frac(pos + 0.2 * hsin(time / 15.0));
+    double hue = frac(0.3 * pos + time / 30.0);
     rgb_from_hue(hue, &r, &g, &b);
     //hue += 123.45;
-    //rgb_from_hue(fmod(hue, 1.0), &r, &g, &b);
+    //rgb_from_hue(frac(hue), &r, &g, &b);
     // colour(255 * lum * r, 255 * lum * g, 255 * lum * b);
     // colour(255 * lum, 255 * lum, 255 * lum);
     col(lum * r, lum * g, lum * b);
@@ -150,7 +150,7 @@ void parabola() {
     if (height < 0) {
         x = 0;
         height = 0;
-        hue = fmod(hue + 0.1, 1.0);
+        hue = frac(hue + 0.1);
     }
 
     for (int i = 0; i < NLIGHTS; i++) {
