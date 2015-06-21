@@ -19,11 +19,6 @@ static Button *b;
 //int brightness(double x) { return (int)(1.0 + 254.0 * pow(p0 * x, 2.5)); }
 int brightness(double x) { return 255.0 * p0 * x; }
 
-void col(double r, double g, double b)
-{
-    put_colour(brightness(r), brightness(g), brightness(b));
-}
-
 double timedelta()
 {
     static unsigned long prev = 0;
@@ -39,7 +34,7 @@ double timedelta()
     }
 }
 
-void rainbow(double dt)
+void rainbow(double dt, rgb *out)
 {
     // XXX: scale this logarithmically
     double speed = 3.0 * p1;
@@ -51,24 +46,28 @@ void rainbow(double dt)
         double r, g, b;
         float pos = (float)i / (float)NLIGHTS;
         rgb_from_hue(frac(pos + phase), &r, &g, &b);
-        col(r, g, b);
+        out[i] = (rgb){ r, g, b };
     }
 
     phase = frac(phase);
 }
 
-void alternating(double _dt)
+void alternating(double _dt, rgb out[])
 {
-  for (int i = 0; i < NLIGHTS; i++) {
-    switch (i % 3) {
-    case 0: col(0, 0, 1); break;
-    case 1: col(0, 1, 0); break;
-    case 2: col(1, 0, 0); break;
+    rgb red = { 1, 0, 0 };
+    rgb green = { 0, 1, 0 };
+    rgb blue = { 0, 0, 1 };
+
+    for (int i = 0; i < NLIGHTS; i++) {
+        switch (i % 3) {
+            case 0: out[i] = red; break;
+            case 1: out[i] = green; break;
+            case 2: out[i] = blue; break;
+        }
     }
-  }
 }
 
-void pattern0(double dt)
+void pattern0(double dt, rgb out[])
 {
   float speed = 2.0 * p1;
   static float time = 0;
@@ -84,15 +83,11 @@ void pattern0(double dt)
     //double hue = frac(pos + 0.2 * hsin(time / 15.0));
     double hue = frac(0.3 * pos + time / 30.0);
     rgb_from_hue(hue, &r, &g, &b);
-    //hue += 123.45;
-    //rgb_from_hue(frac(hue), &r, &g, &b);
-    // colour(255 * lum * r, 255 * lum * g, 255 * lum * b);
-    // colour(255 * lum, 255 * lum, 255 * lum);
-    col(lum * r, lum * g, lum * b);
+    out[i] = (rgb){ lum * r, lum * g, lum * b };
   }
 }
 
-void pattern1(double _dt)
+void pattern1(double _dt, rgb out[])
 {
   float time = millis() / 1000.0;
 
@@ -126,11 +121,11 @@ void pattern1(double _dt)
 
     double r, g, b;
     rgb_from_hue(d, &r, &g, &b);
-    col(lum * r, lum * g, lum * b);
+    out[i] = (rgb){ lum * r, lum * g, lum * b };
   }
 }
 
-void parabola(double dt)
+void parabola(double dt, rgb out[])
 {
     static float x = 0;
     static float hue = 0;
@@ -147,11 +142,11 @@ void parabola(double dt)
         float lum = 1.0 - clamp(0.0, 1.0, abs(pow(i - height * (NLIGHTS - 1), 4.0)));
         double r, g, b;
         rgb_from_hue(hue, &r, &g, &b);
-        col(lum * r, lum * g, lum * b);
+        out[i] = (rgb){ lum * r, lum * g, lum * b };
     }
 }
 
-void twinkle(double dt)
+void twinkle(double dt, rgb out[])
 {
     static double hue[NLIGHTS] = { 0, };
     static double lum[NLIGHTS] = { 0, };
@@ -166,14 +161,14 @@ void twinkle(double dt)
 
         double r, g, b;
         rgb_from_hue(hue[i], &r, &g, &b);
-        col(lum[i] * r, lum[i] * g, lum[i] * b);
+        out[i] = (rgb){ lum[i] * r, lum[i] * g, lum[i] * b };
     }
 
     // XXX
     delay(30);
 }
 
-void climb(double dt)
+void climb(double dt, rgb out[])
 {
     static double hue[NLIGHTS] = { 0, };
     static double lum[NLIGHTS] = { 0, };
@@ -188,7 +183,7 @@ void climb(double dt)
     for (int i = 0; i < NLIGHTS; i++) {
         double r, g, b;
         rgb_from_hue(hue[i], &r, &g, &b);
-        col(lum[i] * r, lum[i] * g, lum[i] * b);
+        out[i] = (rgb){ lum[i] * r, lum[i] * g, lum[i] * b };
     }
 
     for (int i = NLIGHTS - 1; i > 0; i--) {
@@ -211,7 +206,7 @@ struct point {
 
 #define POINTS 4
 
-void climb2(double dt)
+void climb2(double dt, rgb out[])
 {
     static struct point points[POINTS] = { 0, };
     static rgb cols[NLIGHTS] = { 0, };
@@ -259,8 +254,7 @@ void climb2(double dt)
     }
 
     for (int i = 0; i < NLIGHTS; i++) {
-        rgb *c = cols + i;
-        col(c->r, c->g, c->b);
+        out[i] = cols[i];
     }
 
 #if 0
@@ -311,7 +305,7 @@ void climb2(double dt)
     }
 }
 
-void pulse(double dt)
+void pulse(double dt, rgb out[])
 {
     static double phase = 0.0;
 
@@ -321,7 +315,7 @@ void pulse(double dt)
     for (int i = 0; i < NLIGHTS; i++) {
         double pos = (double)i / (double)NLIGHTS;
         double lum = 0.8 + 0.2 * sin(5.0 * (pos - phase));
-        col(lum, lum, lum);
+        out[i] = (rgb){ lum, lum, lum };
     }
 }
 
@@ -344,7 +338,7 @@ void setup() {
     b = new Button(4);
 }
 
-static void (*patterns[])(double dt) = {
+static void (*patterns[])(double dt, rgb *out) = {
     pattern0,
     pattern1,
     rainbow,
@@ -365,12 +359,22 @@ void switch_mode()
 void loop()
 {
     double dt = timedelta();
+    rgb cols[NLIGHTS];
 
     if (b->read())
         switch_mode();
 
     read_params();
+    patterns[mode](dt, cols);
+
     begin();
-    patterns[mode](dt);
+
+    for (int i = 0; i < NLIGHTS; i++) {
+        put_colour(
+            brightness(cols[i].r),
+            brightness(cols[i].g),
+            brightness(cols[i].b));
+    }
+
     end();
 }
