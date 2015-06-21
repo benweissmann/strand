@@ -36,8 +36,6 @@ void clear() {
   }
 }
 
-double hsin(double x) { return 0.5 + 0.5 * sin(x); }
-
 void rainbow() {
   for (int i = 0; i < NLIGHTS; i++) {
     double r, g, b;

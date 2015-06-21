@@ -20,6 +20,7 @@ struct pattern
 extern "C" {
 
 double frac(double x);
+double hsin(double x);
 
 void rgb(double hue, double *r, double *g, double *b);
 

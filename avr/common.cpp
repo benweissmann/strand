@@ -8,6 +8,11 @@ double frac(double x)
     return fmod(x, 1.0);
 }
 
+double hsin(double x)
+{
+    return 0.5 + 0.5 * sin(x);
+}
+
 // https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
 
 void rgb(double hue, double *r, double *g, double *b)
