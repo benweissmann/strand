@@ -210,7 +210,6 @@ void climb2(double dt, rgb out[])
 {
     static struct point points[POINTS] = { 0, };
     static rgb cols[NLIGHTS] = { 0, };
-    double td = timedelta();
 
     for (int i = 0; i < NLIGHTS; i++) {
         double pos = (double)i / (double)NLIGHTS;
@@ -279,7 +278,7 @@ void climb2(double dt, rgb out[])
         struct point *p = points + j;
 
         if (p->on) {
-            p->pos += 2.0 * p1 * p->speed * td;
+            p->pos += 2.0 * p1 * p->speed * dt;
 
             if (p->pos > 1.5) {
                 p->on = false;
