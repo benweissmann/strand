@@ -1,12 +1,11 @@
 
 from __future__ import division
 
-import cffi
 import math
 import time
 import sys
 
-import cairo
+import cffi
 import numpy
 from gi.repository import GLib, Gtk
 
@@ -82,17 +81,12 @@ class Pattern:
 
 class Library:
     _def = '''
-        typedef struct {
+        typedef struct
+        {
             double r;
             double g;
             double b;
         } rgb;
-
-        typedef struct
-        {
-            const char *name;
-            void (*update)(double delta, rgb *out);
-        } pattern;
         '''
 
     def __init__(self, path):
@@ -101,13 +95,7 @@ class Library:
         self.lib = self.ffi.dlopen(path)
 
     def get_pattern(self, name):
-        #self.ffi.cdef('pattern {0};'.format(name))
         self.ffi.cdef('void {0}(double, rgb *);'.format(name))
-        #cpat = getattr(self.lib, name)
-        #pat = Pattern()
-        #pat.reset = cpat.init
-        #pat.update = lambda dt, out: \
-        #    cpat.update(dt, self.ffi.cast('rgb *', out.ctypes.data))
         update = getattr(self.lib, name)
         pat = Pattern()
         pat.reset = lambda: None
@@ -142,6 +130,7 @@ def mk_layout_radio(lights):
         (True, circ))
 
 def main():
+    Gtk.init()
     args = sys.argv[1:]
     pat_name = args[0] if args else 'rainbow'
 
@@ -157,7 +146,6 @@ def main():
     adj.props.value = 0.5
     scale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adj)
     scale.props.draw_value = 0
-    #scale.props.digits = 2
 
     GLib.timeout_add(30, lambda: update(pat, adj, lights))
 
