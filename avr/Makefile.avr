@@ -1,5 +1,5 @@
 
-CFLAGS += -std=c99
-
 include /usr/share/arduino/Arduino.mk
+
+CFLAGS += -std=c99
 
