@@ -20,8 +20,8 @@ void sendByte(char b) {
 
 #else /* SPI */
 
-#define CLK 11 /* white */
-#define DAT 12 /* green */
+#define CLK 8 /* green */
+#define DAT 9 /* white */
 
 #ifndef CLK
 #error CLK not defined
