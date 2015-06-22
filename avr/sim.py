@@ -10,13 +10,19 @@ import cairo
 import numpy
 from gi.repository import GLib, Gtk
 
-def vbox(*ws):
-    #box = Gtk.Box(Gtk.Orientation.HORIZONTAL, 0)
-    box = Gtk.VBox(0)
-
+def pack_box(box, ws):
     for (e, w) in ws:
         box.pack_start(w, e, True, 0)
 
+def hbox(*ws):
+    box = Gtk.HBox(0)
+    pack_box(box, ws)
+    return box
+
+def vbox(*ws):
+    #box = Gtk.Box(Gtk.Orientation.HORIZONTAL, 0)
+    box = Gtk.VBox(0)
+    pack_box(box, ws)
     return box
 
 class Lights(Gtk.DrawingArea):
@@ -25,15 +31,16 @@ class Lights(Gtk.DrawingArea):
         self.nlights = 50
         self.colours = numpy.zeros(
             (self.nlights, 3), dtype=numpy.double)
+        self._draw_lights = self._draw_linear
 
-    def do_draw(self, cr, *a):
-        #print 'draw', a
-        w = self.get_allocated_width()
-        h = self.get_allocated_height()
-        cr.rectangle(0, 0, w, h)
-        cr.set_source_rgb(0, 0, 0)
+    def _draw_light(self, cr, x, y, colour):
+        cr.arc(x, y, 8, 0, 2 * math.pi)
+        cr.set_source_rgb(0.5, 0.5, 0.5)
+        cr.stroke_preserve()
+        cr.set_source_rgb(*colour)
         cr.fill()
 
+    def _draw_linear(self, w, h, cr):
         margin = w / 20
         ew = w - 2 * margin
         eh = h - 2 * margin
@@ -43,13 +50,28 @@ class Lights(Gtk.DrawingArea):
         #cr.stroke()
 
         for i in xrange(self.nlights):
-            cr.arc(
-                margin + float(i) * ew / (self.nlights - 1),
-                h / 2, 8, 0, 2 * math.pi)
-            cr.set_source_rgb(0.5, 0.5, 0.5)
-            cr.stroke_preserve()
-            cr.set_source_rgb(*self.colours[i])
-            cr.fill()
+            x = margin + float(i) * ew / (self.nlights - 1)
+            y = h / 2
+            self._draw_light(cr, x, y, self.colours[i])
+
+    def _draw_circular(self, w, h, cr):
+        r = 0.9 * (min(w, h) / 2)
+
+        for i in xrange(self.nlights):
+            theta = float(i) / self.nlights * -2 * math.pi
+            x = w / 2 + r * math.sin(theta)
+            y = h / 2 + r * math.cos(theta)
+            self._draw_light(cr, x, y, self.colours[i])
+
+    def do_draw(self, cr):
+        w = self.get_allocated_width()
+        h = self.get_allocated_height()
+
+        cr.rectangle(0, 0, w, h)
+        cr.set_source_rgb(0, 0, 0)
+        cr.fill()
+
+        self._draw_lights(w, h, cr)
 
 class Pattern:
     def reset(self):
@@ -101,6 +123,24 @@ def update(pat, speed_adj, lights):
     lights.queue_draw()
     return True
 
+def mk_layout_radio(lights):
+    def lin_cb(r):
+        if r.get_active():
+            lights._draw_lights = lights._draw_linear
+
+    def circ_cb(r):
+        if r.get_active():
+            lights._draw_lights = lights._draw_circular
+
+    lin = Gtk.RadioButton.new_with_label(None, 'linear')
+    lin.connect('toggled', lin_cb)
+    circ = Gtk.RadioButton.new_with_label_from_widget(lin, 'circular')
+    circ.connect('toggled', circ_cb)
+
+    return hbox(
+        (True, lin),
+        (True, circ))
+
 def main():
     args = sys.argv[1:]
     pat_name = args[0] if args else 'rainbow'
@@ -121,6 +161,7 @@ def main():
     win = Gtk.Window()
     win.add(vbox(
         (True, lights),
+        (False, mk_layout_radio(lights)),
         (False, scale)))
     win.connect('destroy', lambda w: Gtk.main_quit())
     win.show_all()
