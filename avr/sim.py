@@ -49,7 +49,7 @@ class Lights(Gtk.DrawingArea):
         #cr.rectangle(margin, margin, ew, eh)
         #cr.stroke()
 
-        for i in xrange(self.nlights):
+        for i in range(self.nlights):
             x = margin + float(i) * ew / (self.nlights - 1)
             y = h / 2
             self._draw_light(cr, x, y, self.colours[i])
@@ -57,7 +57,7 @@ class Lights(Gtk.DrawingArea):
     def _draw_circular(self, w, h, cr):
         r = 0.9 * (min(w, h) / 2)
 
-        for i in xrange(self.nlights):
+        for i in range(self.nlights):
             theta = float(i) / self.nlights * -2 * math.pi
             x = w / 2 + r * math.sin(theta)
             y = h / 2 + r * math.cos(theta)
@@ -152,6 +152,9 @@ def main():
     lights.t = time.time()
 
     adj = Gtk.Adjustment(0.5, 0, 1, 0.01)
+    # weird: adjustment mysteriously sometimes has value 0 when running under
+    # CPython 3.0 without this line
+    adj.props.value = 0.5
     scale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adj)
     scale.props.draw_value = 0
     #scale.props.digits = 2
