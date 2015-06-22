@@ -34,4 +34,5 @@ PATTERN(climb2)
 PATTERN(parabola)
 PATTERN(pulse)
 PATTERN(twinkle)
+PATTERN(flash)
 }

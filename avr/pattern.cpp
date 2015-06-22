@@ -302,3 +302,23 @@ void pulse(double dt, rgb out[])
     }
 }
 
+void flash(double dt, rgb out[])
+{
+    static double phase = 0.0;
+
+    if (phase < 0.5) {
+      for (int i = 0; i < NLIGHTS; i++) {
+        double r, g, b;
+        double pos = (double)i / (double)NLIGHTS;
+        rgb_from_hue(pos, &r, &g, &b);
+        out[i] = (rgb){ r, g, b };
+      }
+    } else {
+      for (int i = 0; i < NLIGHTS; i++) {
+        out[i] = (rgb){ 0, 0, 0 };
+      }
+    }
+
+    phase = frac(phase + dt * 100);
+}
+
