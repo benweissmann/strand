@@ -1,5 +1,6 @@
 
 #include <math.h>
+#include <stdlib.h>
 
 #include "common.h"
 
@@ -54,4 +55,14 @@ void rgb_mul(double x, rgb *c)
     c->r *= x;
     c->g *= x;
     c->b *= x;
+}
+
+int euclidean_mod(int n, int m) {
+    int i = ((n%m) + m) % m;
+
+    if(i < 0) {
+        return i + abs(m);
+    } else {
+        return i;
+    }
 }

@@ -1,7 +1,10 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <bitset>
 #include "pattern.h"
+
+#include <iostream>
 
 #ifdef ARDUINO
 #include <Arduino.h>
@@ -321,4 +324,120 @@ void flash(double dt, rgb out[])
 
     phase = frac(phase + dt * 100);
 }
+
+void automaton(double dt, rgb out[], int wolframCode)
+{
+    // XXX: we should do this elsewhere
+    srand48(time(NULL));
+
+    static double phase = 1.0;
+
+    // bitset representing alive cells
+    static std::bitset<NLIGHTS> state;
+
+    // hues for living cells
+    static double hues [NLIGHTS];
+
+    // number of generations since last resent
+    static int numGenSinceReset = 0;
+
+
+    phase += 10 * dt;
+
+    if (phase >= 1.0) {
+        // run a generation of the auotmaton
+
+        std::bitset<NLIGHTS> newState;
+        double newHues [NLIGHTS];
+        if (state.none() || (numGenSinceReset > 250)) {
+            // we re-initialize if all cells are dead, and also perodically
+            for (int i = 0; i < 3; i++) {
+                int light = random(0, NLIGHTS - 1);
+                newState.set(light);
+                newHues[light] = random(255) / 255;
+            }
+
+            numGenSinceReset = 0;
+        }
+        else {
+            numGenSinceReset++;
+
+            for (int i = 0; i < NLIGHTS; i++) {
+                // we only want the light at i and the ones to the left and right
+                int leftShift = NLIGHTS - i - 2;
+                int rightShift = NLIGHTS - 3;
+
+                if(leftShift < 0) {
+                    rightShift -= leftShift;
+                    leftShift = 0;
+                }
+
+                std::bitset<NLIGHTS> cellState  = (state << leftShift) >> rightShift;
+
+                // edge conditions
+                if(i == (NLIGHTS - 1)) {
+                    // left edge, use the right edge as the top bit
+                    cellState.set(2, state[0]);
+                } else if (i == 0) {
+                    // right edge, use the left edge as the bottom bit
+                    cellState.set(0, state[NLIGHTS - 1]);
+                }
+
+                // we interpret the cell state as a 3-digit binary number and then
+                // read that digit out of the wolfram code to determine whether the
+                // cell is alive in the next interation
+                if (wolframCode & (1 << cellState.to_ulong())) {
+                    // cell lives
+                    newState.set(i);
+
+                    // we give it the average color of its parents
+                    int nParents = 0;
+                    double parentHueSum = 0;
+
+                    for (int offset = -1; offset <= 1; offset++) {
+                        int parentIdx = euclidean_mod(i + offset, NLIGHTS);
+
+                        if (state[parentIdx]) {
+                            nParents++;
+                            parentHueSum += hues[parentIdx];
+                        }
+                    }
+
+                    if (nParents) {
+                        newHues[i] = parentHueSum / nParents;
+                    } else {
+                        newHues[i] = random(0, 255.0) / 255.0;
+                    }
+                }
+
+            }
+        }
+
+        state = newState;
+
+        for(int i = 0; i < NLIGHTS; i++) {
+            hues[i] = newHues[i];
+        }
+
+
+        phase = frac(phase);
+    }
+
+    double lum = 0.5 + 0.5 * (1-phase);
+
+    for( int i = 0; i < NLIGHTS; i++) {
+        if (state[i]) {
+            double r, g, b;
+            rgb_from_hue(hues[i], &r, &g, &b);
+            out[i] = (rgb){ r*lum, g*lum, b*lum };
+        } else {
+            out[i] = (rgb){ 0, 0, 0};
+        }
+    }
+
+}
+
+void automaton146(double dt, rgb out[]) { automaton(dt, out, 146); }
+void automaton154(double dt, rgb out[]) { automaton(dt, out, 154); }
+void automaton22(double dt, rgb out[]) { automaton(dt, out, 22); }
 

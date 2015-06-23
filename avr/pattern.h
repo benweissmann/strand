@@ -15,4 +15,7 @@ PATTERN(parabola)
 PATTERN(pulse)
 PATTERN(twinkle)
 PATTERN(flash)
+PATTERN(automaton146)
+PATTERN(automaton154)
+PATTERN(automaton22)
 }

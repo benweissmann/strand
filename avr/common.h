@@ -38,6 +38,8 @@ void rgb_from_hsv(
 void rgb_from_hue(double hue, double *r, double *g, double *b);
 void rgb_mul(double x, rgb *c);
 
+int euclidean_mod(int a, int b);
+
 }
 
 #endif /* _COMMON_H */
